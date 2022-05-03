@@ -1,41 +1,76 @@
+import * as THREE from 'three';
+import dat from 'dat.gui';
 
+//
+// Spiral
+//
 export class Spiral {
 
     public numPoints: number;
     public turnFraction: number;
+    public oscillate: boolean;
+    public radius: number;
 
-    private ctx: CanvasRenderingContext2D;
-    private dim: any;
+    private spheres: THREE.Group;
+    private oscInc: boolean;
 
-    constructor(ctx: CanvasRenderingContext2D, dim: any) {
-        this.numPoints = 10;
+    constructor(scene: THREE.Scene) {
+        this.numPoints = 100;
         this.turnFraction = 0;
+        this.oscillate = true;
+        this.oscInc = true;
+        this.radius = 50;
 
-        this.ctx = ctx;
-        this.dim = dim;
+        this.spheres = new THREE.Group;
+        scene.add(this.spheres);
     }
 
-    drawPoint(x: number, y: number) {
-        const ctx = this.ctx;
+    update() {
+        // Oscilate turnFraction
+        if (this.oscillate) {
+            this.turnFraction += this.oscInc ? 0.0001 : -0.0001
 
-        ctx.fillStyle = 'white';
-        ctx.beginPath();
-        ctx.arc(x, y, 3, 0, 2 * Math.PI, true);
-        ctx.fill();
-    }
+            if (this.turnFraction <= 0) this.oscInc = true;
+            else if (this.turnFraction > 0.1 ) this.oscInc = false;
+        }
 
+        // Update # of points
+        while (this.numPoints > this.spheres.children.length) {
+            this.spawnSphere()
+        }
 
-    goldenSpiral() {
-        for (let i = 0; i < this.numPoints; i++) {
-            const dst = i / (this.numPoints - 1) * (this.dim.w * 3 / 4);
-            const angle = 2 * Math.PI * this.turnFraction * i;
+        while (this.numPoints < this.spheres.children.length) {
+            this.spheres.remove(this.spheres.children[0])
+        }
 
-            const x = dst * Math.cos(angle);
-            const y = dst * Math.sin(angle);
+        // Update positions
+        for (let i = 0; i < this.spheres.children.length; i++) {
+            const t = i / (this.numPoints - 1);
+            const inclination = Math.acos(1 - 2 * t);
+            const azimuth = 2 * Math.PI * this.turnFraction * i;
 
-            this.drawPoint(this.dim.w / 2 + x, this.dim.h / 2 + y);
+            const x = this.radius * Math.sin(inclination) * Math.cos(azimuth);
+            const y = this.radius * Math.sin(inclination) * Math.sin(azimuth);
+            const z = this.radius * Math.cos(inclination) * Math.sin(azimuth);
+
+            this.spheres.children[i].position.set(x, y, z);
+
         }
     }
 
-}
 
+    private spawnSphere() {
+        const geo = new THREE.SphereGeometry(1, 32, 16);
+        const sphere = new THREE.Mesh( geo, new THREE.MeshBasicMaterial() );
+
+        this.spheres.add(sphere);
+    }
+
+    public makeGui() {
+        const gui = new dat.GUI();
+        gui.add(this, "numPoints", 0, 1000);
+        gui.add(this, "turnFraction", 0, 0.1);
+        gui.add(this, "oscillate", 0, 0.1);
+    }
+
+}
