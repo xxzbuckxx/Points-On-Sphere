@@ -50,26 +50,6 @@ export class World {
     }
 
     //
-    // Initialize Scene Light
-    //
-    private initLight(): any {
-        const light = new THREE.DirectionalLight('white', 2);
-        light.position.set(30, 30, 30);
-        return light;
-    }
-
-    //
-    // Initialize Scene Fog
-    //
-    private initFog(): void {
-        const near = 0;
-        const far = 230;
-        const color = 0x87ace8;  // blue
-        this.scene.background = new THREE.Color(color);
-        this.scene.fog = new THREE.Fog(color, near, far);
-    }
-
-    //
     // Initialize Renderer
     //
     private initRenderer(): THREE.WebGLRenderer{
