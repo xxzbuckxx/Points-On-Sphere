@@ -46,15 +46,15 @@ export class Spiral {
         // Update positions
         for (let i = 0; i < this.spheres.children.length; i++) {
             const t = i / (this.numPoints - 1);
-            const inclination = Math.acos(1 - 2 * t);
-            const azimuth = 2 * Math.PI * this.turnFraction * i;
+            const theta = Math.acos(1 - 2 * t);
+            const phi = 2 * Math.PI * this.turnFraction * i;
 
-            const x = this.radius * Math.sin(inclination) * Math.cos(azimuth);
-            const y = this.radius * Math.sin(inclination) * Math.sin(azimuth);
-            const z = this.radius * Math.cos(inclination) * Math.sin(azimuth);
+            const v = new THREE.Vector3();
+            v.x = this.radius * Math.sin(theta) * Math.cos(phi);
+            v.y = this.radius * Math.sin(theta) * Math.sin(phi);
+            v.z = this.radius * Math.cos(theta);
 
-            this.spheres.children[i].position.set(x, y, z);
-
+            this.spheres.children[i].position.set(v.x, v.y, v.z);
         }
     }
 

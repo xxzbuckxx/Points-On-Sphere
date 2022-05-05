@@ -3,6 +3,7 @@ import { Spiral } from './spiral';
 
 import './style.css'
 
+// Singletons
 let spiral: Spiral;
 let world: World;
 
@@ -10,13 +11,12 @@ function Init() {
   world = new World();
   spiral = new Spiral(world.scene);
   spiral.makeGui();
-
 }
 
 function Animate() {
   world.update();
-
   spiral.update();
+
   requestAnimationFrame( Animate ); // loop
 }
 
