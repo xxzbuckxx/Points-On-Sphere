@@ -9,17 +9,29 @@ export class Spiral {
     public numPoints: number;
     public radius: number;
 
+    private initIncrease: boolean;
     private spheres: THREE.Group;
 
     constructor(scene: THREE.Scene) {
-        this.numPoints = 100;
+        this.numPoints = 0;
         this.radius = 80;
+        this.initIncrease = true;
 
         this.spheres = new THREE.Group;
         scene.add(this.spheres);
     }
 
     update() {
+        // Intro Transition
+        if (this.initIncrease) {
+            if (this.numPoints < 400) {
+                this.numPoints++;
+            } else {
+                this.makeGui();
+                this.initIncrease = false;
+            }
+        }
+
         // Update # of points
         while (this.numPoints > this.spheres.children.length) {
             this.spawnSphere()

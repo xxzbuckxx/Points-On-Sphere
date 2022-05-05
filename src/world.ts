@@ -44,7 +44,7 @@ export class World {
     //
     private initCamera(): THREE.PerspectiveCamera {
         const c = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
-        c.position.set(0, 0, 200);
+        c.position.set(200, 0, 0);
         c.lookAt(this.scene.position);
         return c;
     }
@@ -93,22 +93,4 @@ export class World {
 
         this.renderer.setSize( window.innerWidth, window.innerHeight );
     }
-}
-
-//
-// Scene floor
-// Adds sand colored plane to scene
-//
-export function initFloor(boundary: THREE.LineSegments) {
-    const boundingBox = new THREE.Box3().setFromObject(boundary);
-    const size = new THREE.Vector3();
-    boundingBox.getSize(size);
-
-    const geo = new THREE.PlaneBufferGeometry(2000, 2000, 1, 1);
-    const mat = new THREE.MeshStandardMaterial({ color: 0xebe4a0, side: THREE.DoubleSide });
-    const p  = new THREE.Mesh(geo, mat);
-    p.rotateX(- Math.PI/2);
-    p.position.y = -size.y/2;
-
-    return p;
 }

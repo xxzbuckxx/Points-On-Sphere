@@ -10,7 +10,6 @@ let world: World;
 function Init() {
   world = new World();
   spiral = new Spiral(world.scene);
-  spiral.makeGui();
 }
 
 function Animate() {
