@@ -64,21 +64,10 @@ export class Spiral {
             v.y = Math.sin(inclination) * Math.sin(azimuth);
             v.z = Math.cos(inclination);
 
-
-            // Fix Color
-            const color_v = v.clone();
-            color_v.x = Math.abs(color_v.x);
-            color_v.y = Math.abs(color_v.y);
-            color_v.z = Math.abs(color_v.z);
-
-            let r = Math.floor(color_v.x*255).toString(16);
-            let g = Math.floor(color_v.y*255).toString(16);
-            let b = Math.floor(color_v.z*255).toString(16);
-            while (r.length < 2) r = "0" + r;
-            while (g.length < 2) g = "0" + g;
-            while (b.length < 2) b = "0" + b;
-            const color = `0x${r}${g}${b}`;
-            this.spheres.children[i].material.color.setHex(color)
+            // Color
+            const color = this.calculateColor(v);
+            const mesh = this.spheres.children[i] as any;
+            mesh.material.color.setHex(color)
 
             // Set Positions
             v.multiplyScalar(this.radius);
@@ -89,6 +78,18 @@ export class Spiral {
 
     }
 
+    private calculateColor(v: THREE.Vector3): string {
+            const xyz = [v.x, v.y, v.z]
+            let out = '0x'
+            xyz.forEach(n => {
+                n = Math.abs(n);
+                let h = Math.floor(n*255).toString(16); // scale to color range
+                while (h.length < 2) h = "0" + h;       // pad zeros
+                out += h;
+            });
+
+            return out
+    }
 
     private spawnSphere() {
         const geo = new THREE.SphereGeometry(1, 32, 16);
